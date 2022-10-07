@@ -34,10 +34,12 @@ import { ref, onMounted, onUpdated } from "vue";
 
 let breakdowns = ref("");
 let id = ref(1);
+const totalRandoms = ref(0);
 
 // WHEN MOUNTED
 onMounted(async () => {
   const { data } = await axios.get(`/api/random/${id.value}`);
+  totalRandoms.value = await (await axios.get('/api/total-randoms')).data;
 
   data.forEach(({ values }) => {
     breakdowns.value += values;
@@ -48,7 +50,7 @@ onMounted(async () => {
 
 // WHEN UPDATED 
 onUpdated(() => {
-  if (id.value <= 5) {
+  if (id.value <= totalRandoms.value) {
     setTimeout(async () => {
       const { data } = await axios.get(`/api/random/${id.value}`);
 
